@@ -308,14 +308,19 @@ public class SchedulesPanel extends SimplePanel {
     final String tooltip = isRunning ? Messages.getString( "stopScheduler" ) : Messages.getString( "startScheduler" );
     controlSchedulerButton.setToolTip( tooltip );
 
-    final String buttonIconCss = isRunning ? "icon-stop-scheduler" : "icon-start-scheduler";
-    controlSchedulerButton.setImage( ImageUtil.getThemeableImage( ICON_SMALL_STYLE, buttonIconCss ) );
+    //final String buttonIconCss = isRunning ? "icon-stop-scheduler" : "icon-start-scheduler";
+    //controlSchedulerButton.setImage( ImageUtil.getThemeableImage( ICON_SMALL_STYLE, buttonIconCss ) );
+    //This is to update first icon for stop/start the scheduler with icons of stop/start of scheduler task.
+    final String controlButtonCss = isRunning ? "icon-stop" : ICON_RUN_STYLE;
+    controlSchedulerButton.setImage( ImageUtil.getThemeableImage( ICON_SMALL_STYLE, controlButtonCss ) );
   }
 
   private void updateJobScheduleButtonStyle( String state ) {
     boolean isRunning = JOB_STATE_NORMAL.equalsIgnoreCase( state );
 
-    String controlButtonCss = isRunning ? "icon-stop" : ICON_RUN_STYLE;
+    //String controlButtonCss = isRunning ? "icon-stop" : ICON_RUN_STYLE;
+    //Update the following icons to new icons avaialble like in PDI icons 2, 3.
+    String controlButtonCss = isRunning ? "icon-start-new" : "icon-stop-new";
     controlScheduleButton.setImage( ImageUtil.getThemeableImage( ICON_SMALL_STYLE, controlButtonCss ) );
 
     String controlButtonTooltip = isRunning ? Messages.getString( "stop" ) : Messages.getString( "start" );
@@ -792,6 +797,8 @@ public class SchedulesPanel extends SimplePanel {
     bar.add( Toolbar.GLUE );
 
     // Add control scheduler button
+    //The following if block needs to be keep down than the filter and also needs to change the icon with scheduler start/stop task.
+/*
     if ( isAdmin ) {
       final ToolbarButton controlSchedulerButton = new ToolbarButton( ImageUtil.getThemeableImage(
         ICON_SMALL_STYLE, "icon-start-scheduler" ) );
@@ -806,6 +813,7 @@ public class SchedulesPanel extends SimplePanel {
       bar.add( controlSchedulerButton );
       bar.addSpacer( 20 );
     }
+*/
 
     // Add filter button
     filterButton.setCommand( new Command() {
@@ -841,18 +849,6 @@ public class SchedulesPanel extends SimplePanel {
       bar.add( filterRemoveButton );
     }
 
-    // Add refresh button
-    ToolbarButton refresh = new ToolbarButton( ImageUtil.getThemeableImage( ICON_SMALL_STYLE, "icon-refresh" ) );
-    refresh.setToolTip( Messages.getString( "refreshTooltip" ) );
-    refresh.setCommand( new Command() {
-      public void execute() {
-        RefreshSchedulesCommand cmd = new RefreshSchedulesCommand();
-        cmd.execute();
-      }
-    } );
-    bar.add( refresh );
-
-    bar.addSpacer( 20 );
 
     // Add execute now button
     triggerNowButton.setToolTip( Messages.getString( "executeNow" ) );
@@ -867,7 +863,23 @@ public class SchedulesPanel extends SimplePanel {
     triggerNowButton.setEnabled( false );
     bar.add( triggerNowButton );
 
+    bar.addSpacer( 20 );
+
+    // Add refresh button
+    ToolbarButton refresh = new ToolbarButton( ImageUtil.getThemeableImage( ICON_SMALL_STYLE, "icon-refresh" ) );
+    refresh.setToolTip( Messages.getString( "refreshTooltip" ) );
+    refresh.setCommand( new Command() {
+      public void execute() {
+        RefreshSchedulesCommand cmd = new RefreshSchedulesCommand();
+        cmd.execute();
+      }
+    } );
+    bar.add( refresh );
+
+    //bar.addSpacer( 20 );
+
     // Add control schedule button
+
     controlScheduleButton.setCommand( new Command() {
       public void execute() {
         Set<JsJob> selectedJobs = getSelectedJobs();
@@ -885,7 +897,23 @@ public class SchedulesPanel extends SimplePanel {
     controlScheduleButton.setEnabled( false );
     bar.add( controlScheduleButton );
 
-    bar.addSpacer( 20 );
+
+    //bar.addSpacer( 20 );
+
+    if ( isAdmin ) {
+      final ToolbarButton controlSchedulerButton = new ToolbarButton( ImageUtil.getThemeableImage(
+              ICON_SMALL_STYLE, "icon-start-scheduler" ) );
+
+      controlSchedulerButton.setCommand( new Command() {
+        public void execute() {
+          toggleSchedulerOnOff( controlSchedulerButton, isScheduler );
+        }
+      } );
+      updateControlSchedulerButtonState( controlSchedulerButton, isScheduler );
+
+      bar.add( controlSchedulerButton );
+      //bar.addSpacer( 20 );
+    }
 
     // Add edit button
     editButton.setCommand( new Command() {
